@@ -338,18 +338,18 @@ impl SwayosdWindow {
 		self.clear_osd();
 
 		let label = self.build_text_widget(&Some(message.into()), None);
-		label.set_hexpand(true);
 
 		if let Some(icon_name) = icon_name {
+			// icon and text centered together as one group
 			let icon = self.build_icon_widget(icon_name);
-			self.container.append(&icon);
-			self.container.append(&label);
-			// allocation is still 0 when the window is already visible, measure instead
-			let (_, icon_width, _, _) = icon.measure(gtk::Orientation::Horizontal, -1);
-			label.set_margin_end(
-				icon_width + icon.margin_start() + icon.margin_end() + self.container.spacing(),
-			);
+			let group = gtk::Box::new(gtk::Orientation::Horizontal, self.container.spacing());
+			group.set_halign(gtk::Align::Center);
+			group.set_hexpand(true);
+			group.append(&icon);
+			group.append(&label);
+			self.container.append(&group);
 		} else {
+			label.set_hexpand(true);
 			self.container.append(&label);
 		}
 
